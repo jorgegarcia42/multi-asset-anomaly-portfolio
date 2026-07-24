@@ -1,5 +1,6 @@
 from src.portfolio.backtester import run_walk_forward_backtest
 from src.data.download import get_prices
+from src.visualization.plotter import plot_equity_curve, plot_weight_history
 
 if __name__ == "__main__":
     tickers = (
@@ -30,3 +31,6 @@ if __name__ == "__main__":
     print(f"total return acc: {(portfolio_equity.iloc[-1] - 1) * 100:.2f}%")
     print("last weights:")
     print(weights_history.tail())
+
+    plot_equity_curve(portfolio_returns)
+    plot_weight_history(weights_history)
