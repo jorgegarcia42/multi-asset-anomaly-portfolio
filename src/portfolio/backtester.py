@@ -11,7 +11,7 @@ def run_walk_forward_backtest(
     rebalance_days: int = 21,
     max_weight: float = 0.25,
     transaction_fee: float = 0.001,
-    objective_type: str = "minimum variance",
+    objective_type: str = "minimum_variance",
 ) -> tuple[pd.Series, pd.DataFrame]:
     # run backtest with dynamic rebalancing
 
