@@ -8,26 +8,34 @@ def optimize_portfolio(
     cov_matrix: pd.DataFrame,
     risk_aversion: float = 2.0,
     max_weight: float = 0.25,
+    objective_type: str = "minimum_variance",
 ):
-    # computes optimum weights using convex optimization (Markowitz)
-    # maximizes risk-adjusted return based on institutional constraints
+    # computes optimum weights using Global Minimum Variance (GMV) Portfolio
+    # ignores expected returns and minimize risks
     n_assets = len(expected_returns)
 
     # weight vector to optimize
     w = cp.Variable(n_assets)
 
     # numeric values for the solver
-    mu = expected_returns.values
     Sigma = cov_matrix.values
+    mu = expected_returns.values
 
     epsilon = 1e-5
     Sigma = Sigma + epsilon * np.eye(n_assets)
     Sigma = cp.psd_wrap(Sigma)
 
-    # objective function: Expected Return - Risk Penalty
-    portfolio_return = w.T @ mu
+    # objective function: Minimum Variance
     portfolio_variance = cp.quad_form(w, Sigma)
-    objective = cp.Maximize(portfolio_return - (risk_aversion / 2) * portfolio_variance)
+    if objective_type == "markowitz":
+        porfolio_return = w.T @ mu
+        objective = cp.Maximize(
+            porfolio_return - (risk_aversion / 2) * portfolio_variance
+        )
+    elif objective_type == "minimum_variance":
+        objective = cp.Minimize(portfolio_variance)
+    else:
+        raise ValueError("incorrect objective_type")
 
     # institutional constraints
     constraints = [

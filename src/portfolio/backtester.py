@@ -11,6 +11,7 @@ def run_walk_forward_backtest(
     rebalance_days: int = 21,
     max_weight: float = 0.25,
     transaction_fee: float = 0.001,
+    objective_type: str = "minimum variance",
 ) -> tuple[pd.Series, pd.DataFrame]:
     # run backtest with dynamic rebalancing
 
@@ -24,7 +25,9 @@ def run_walk_forward_backtest(
         past_prices = prices.iloc[i - lookback_days : i]
         mu, cov = get_returns_and_covariance(past_prices)
 
-        weights = optimize_portfolio(mu, cov, max_weight=max_weight)
+        weights = optimize_portfolio(
+            mu, cov, max_weight=max_weight, objective_type=objective_type
+        )
 
         # save the weights for an specific day
         rebalance_date = prices.index[i]

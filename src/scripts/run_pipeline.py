@@ -16,7 +16,7 @@ if __name__ == "__main__":
     prices = raw_prices.dropna(axis=1)
 
     portfolio_returns, weights_history = run_walk_forward_backtest(
-        prices, lookback_days=252, rebalance_days=21
+        prices, lookback_days=252, rebalance_days=21, objective_type="markowitz"
     )
 
     portfolio_equity = (1 + portfolio_returns).cumprod()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     print("metrics:")
     metrics_df = pd.DataFrame(
         {
-            "Markowitz (Strategy)": strategy_metrics,
+            "Minimum Varianze (Strategy)": strategy_metrics,
             "Equal Weight (Naive)": naive_metrics,
         }
     ).T
