@@ -1,5 +1,6 @@
 import pandas as pd
 import cvxpy as cp
+import numpy as np
 
 
 def optimize_portfolio(
@@ -19,6 +20,10 @@ def optimize_portfolio(
     mu = expected_returns.values
     Sigma = cov_matrix.values
 
+    epsilon = 1e-5
+    Sigma = Sigma + epsilon * np.eye(n_assets)
+    Sigma = cp.psd_wrap(Sigma)
+
     # objective function: Expected Return - Risk Penalty
     portfolio_return = w.T @ mu
     portfolio_variance = cp.quad_form(w, Sigma)
@@ -33,7 +38,7 @@ def optimize_portfolio(
 
     # solve the problem
     problem = cp.Problem(objective, constraints)
-    problem.solve()
+    problem.solve(solver=cp.SCS)
 
     optimal_weights = pd.Series(w.value, index=expected_returns.index)
     optimal_weights = optimal_weights.round(4)

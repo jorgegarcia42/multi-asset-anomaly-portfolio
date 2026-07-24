@@ -23,7 +23,7 @@ def plot_weight_history(weights_df: pd.DataFrame):
         labels=active_weights.columns,
         alpha=0.85,
     )
-    plt.title("weigth history")
+    plt.title("weight history")
     plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
     plt.tight_layout()
     plt.show()
