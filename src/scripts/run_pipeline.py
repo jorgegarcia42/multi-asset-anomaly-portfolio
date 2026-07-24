@@ -1,27 +1,19 @@
 from src.portfolio.metrics import compute_metrics
 from src.portfolio.backtester import run_walk_forward_backtest
 from src.data.download import get_prices
+from src.data.universe import get_tickers
 from src.visualization.plotter import plot_equity_curve, plot_weight_history
 import pandas as pd
 
 if __name__ == "__main__":
-    tickers = (
-        "AAPL",
-        "MSFT",
-        "GOOGL",
-        "AMZN",
-        "META",
-        "JNJ",
-        "XOM",
-        "JPM",
-        "PG",
-        "NVDA",
-    )
+    tickers = get_tickers()
 
     start_date = "2017-01-01"
     end_date = "2026-01-01"
 
-    prices = get_prices(tickers, start_date, end_date)
+    raw_prices = get_prices(tickers, start_date, end_date)
+
+    prices = raw_prices.dropna(axis=1)
 
     portfolio_returns, weights_history = run_walk_forward_backtest(
         prices, lookback_days=252, rebalance_days=21
