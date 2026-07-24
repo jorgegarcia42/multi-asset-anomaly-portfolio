@@ -11,9 +11,7 @@ if __name__ == "__main__":
     start_date = "2017-01-01"
     end_date = "2026-01-01"
 
-    raw_prices = get_prices(tickers, start_date, end_date)
-
-    prices = raw_prices.dropna(axis=1)
+    prices = get_prices(tickers, start_date, end_date)
 
     portfolio_returns, weights_history = run_walk_forward_backtest(
         prices,
@@ -25,7 +23,7 @@ if __name__ == "__main__":
 
     portfolio_equity = (1 + portfolio_returns).cumprod()
 
-    daily_returns = prices.pct_change().fillna(0)
+    daily_returns = prices.pct_change(fill_method=None)
     naive_returns_full = daily_returns.mean(axis=1)
     naive_returns = naive_returns_full.loc[portfolio_returns.index]
 
