@@ -2,11 +2,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-def plot_equity_curve(portfolio_returns: pd.DataFrame):
+def plot_equity_curve(portfolio_returns: pd.DataFrame, benchmark_returns: pd.DataFrame):
     equity = (1 + portfolio_returns).cumprod()
+    bench_equity = (1 + benchmark_returns).cumprod()
     plt.figure(figsize=(12, 6))
     plt.plot(equity.index, equity, label="strategy (net)", color="blue", linewidth=2)
+    plt.plot(bench_equity.index, bench_equity, label="naive equal weight", color="gray")
     plt.title("portfolio equity")
+    plt.legend()
     plt.tight_layout()
     plt.show()
 

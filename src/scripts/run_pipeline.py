@@ -27,10 +27,14 @@ if __name__ == "__main__":
 
     portfolio_equity = (1 + portfolio_returns).cumprod()
 
+    daily_returns = prices.pct_change().fillna(0)
+    naive_returns_full = daily_returns.mean(axis=1)
+    naive_returns = naive_returns_full.loc[portfolio_returns.index]
+
     print(f"total rebalances: {len(weights_history)}")
     print(f"total return acc: {(portfolio_equity.iloc[-1] - 1) * 100:.2f}%")
     print("last weights:")
     print(weights_history.tail())
 
-    plot_equity_curve(portfolio_returns)
+    plot_equity_curve(portfolio_returns, naive_returns)
     plot_weight_history(weights_history)
