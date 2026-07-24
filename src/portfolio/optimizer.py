@@ -10,7 +10,7 @@ def optimize_portfolio(
     max_weight: float = 0.25,
     objective_type: str = "minimum_variance",
 ):
-    # computes optimum weights using Global Minimum Variance (GMV) Portfolio
+    # computes optimum weights using global minimum variance (gmv) portfolio
     # ignores expected returns and minimize risks
     n_assets = len(expected_returns)
 
@@ -25,7 +25,7 @@ def optimize_portfolio(
     Sigma = Sigma + epsilon * np.eye(n_assets)
     Sigma = cp.psd_wrap(Sigma)
 
-    # objective function: Minimum Variance
+    # objective function: minimum variance
     portfolio_variance = cp.quad_form(w, Sigma)
     if objective_type == "markowitz":
         porfolio_return = w.T @ mu
@@ -48,6 +48,18 @@ def optimize_portfolio(
     problem = cp.Problem(objective, constraints)
     problem.solve(solver=cp.SCS)
 
-    optimal_weights = pd.Series(w.value, index=expected_returns.index)
-    optimal_weights = optimal_weights.round(4)
+    if problem.status not in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE}:
+        raise RuntimeError(f"Portfolio optimization failed: {problem.status}")
+
+    if w.value is None:
+        raise RuntimeError("Portfolio optimizer returned no weights")
+
+    optimal_weights = pd.Series(
+        np.asarray(w.value).reshape(-1),
+        index=expected_returns.index,
+    )
+
+    if not np.isfinite(optimal_weights).all():
+        raise RuntimeError("Portfolio optimizer returned non-finite weights")
+
     return optimal_weights
