@@ -1,0 +1,1 @@
+in this project, i'll be building a portfolio management tool using Markowitz theory
