@@ -16,7 +16,11 @@ if __name__ == "__main__":
     prices = raw_prices.dropna(axis=1)
 
     portfolio_returns, weights_history = run_walk_forward_backtest(
-        prices, lookback_days=252, rebalance_days=21, objective_type="minimum_variance"
+        prices,
+        lookback_days=252,
+        rebalance_days=21,
+        objective_type="markowitz",
+        risk_aversion=1.0,
     )
 
     portfolio_equity = (1 + portfolio_returns).cumprod()

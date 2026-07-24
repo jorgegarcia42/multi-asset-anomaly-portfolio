@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from src.portfolio.signals import calculate_momentum_scores
 from src.portfolio.optimizer import optimize_portfolio
 from src.data.processing import get_returns_and_covariance
 
@@ -12,6 +13,7 @@ def run_walk_forward_backtest(
     max_weight: float = 0.25,
     transaction_fee: float = 0.001,
     objective_type: str = "minimum_variance",
+    risk_aversion: float = 2.0,
 ) -> tuple[pd.Series, pd.DataFrame]:
     # run backtest with dynamic rebalancing
 
@@ -23,10 +25,18 @@ def run_walk_forward_backtest(
     last_weights = pd.Series(0, index=prices.columns)
     for i in range(lookback_days, len(prices), rebalance_days):
         past_prices = prices.iloc[i - lookback_days : i]
-        mu, cov = get_returns_and_covariance(past_prices)
+        _, cov = get_returns_and_covariance(past_prices)
+
+        mu_signal = calculate_momentum_scores(
+            past_prices, lookback=lookback_days, skip_recent=21
+        )
 
         weights = optimize_portfolio(
-            mu, cov, max_weight=max_weight, objective_type=objective_type
+            mu_signal,
+            cov,
+            max_weight=max_weight,
+            objective_type=objective_type,
+            risk_aversion=risk_aversion,
         )
 
         # save the weights for an specific day
