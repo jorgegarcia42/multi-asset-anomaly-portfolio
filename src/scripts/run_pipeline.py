@@ -1,6 +1,5 @@
-from src.portfolio.optimizer import optimize_portfolio
+from src.portfolio.backtester import run_walk_forward_backtest
 from src.data.download import get_prices
-from src.data.processing import get_returns_and_covariance
 
 if __name__ == "__main__":
     tickers = (
@@ -15,18 +14,19 @@ if __name__ == "__main__":
         "PG",
         "NVDA",
     )
-    prices = get_prices(tickers)
-    expected_returns, cov_matrix = get_returns_and_covariance(prices)
 
-    print("Anual expected results:")
-    print(expected_returns)
-    print("Cov Matrix")
-    print(cov_matrix)
+    start_date = "2017-01-01"
+    end_date = "2026-01-01"
 
-    optimal_weights = optimize_portfolio(expected_returns, cov_matrix)
+    prices = get_prices(tickers, start_date, end_date)
 
-    print("capital allocation")
-    active_positions = optimal_weights[optimal_weights > 0.001].sort_values(
-        ascending=False
+    portfolio_returns, weights_history = run_walk_forward_backtest(
+        prices, lookback_days=252, rebalance_days=21
     )
-    print(active_positions * 100)
+
+    portfolio_equity = (1 + portfolio_returns).cumprod()
+
+    print(f"total rebalances: {len(weights_history)}")
+    print(f"total return acc: {(portfolio_equity.iloc[-1] - 1) * 100:.2f}%")
+    print("last weights:")
+    print(weights_history.tail())
