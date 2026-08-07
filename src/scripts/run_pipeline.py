@@ -19,6 +19,7 @@ if __name__ == "__main__":
         rebalance_days=21,
         objective_type="markowitz",
         risk_aversion=1.0,
+        max_weight=0.25,
     )
 
     portfolio_equity = (1 + portfolio_returns).cumprod()

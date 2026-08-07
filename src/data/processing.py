@@ -1,12 +1,22 @@
 import pandas as pd
+from sklearn.covariance import LedoitWolf
 
 
 def get_returns_and_covariance(
     prices: pd.DataFrame, trading_days: int = 252
 ) -> tuple[pd.Series, pd.DataFrame]:
-    returns = prices.pct_change(fill_method=None).dropna()
-    expected_returns = returns.mean() * trading_days
+    # get expected returns and cov matrix using shrinkage method by Ledoit-Wolf
 
-    cov_matrix = returns.cov() * trading_days
+    daily_returns = prices.pct_change().dropna(how="all")
 
-    return (expected_returns, cov_matrix)
+    mu = daily_returns.mean()
+
+    lw = LedoitWolf()
+    lw.fit(daily_returns.values)
+
+    shrunk_cov = lw.covariance_
+
+    cov_matrix = pd.DataFrame(
+        shrunk_cov, index=daily_returns.columns, columns=daily_returns.columns
+    )
+    return mu, cov_matrix

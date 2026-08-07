@@ -21,8 +21,7 @@ def optimize_portfolio(
     Sigma = cov_matrix.values
     mu = expected_returns.values
 
-    epsilon = 1e-5
-    Sigma = Sigma + epsilon * np.eye(n_assets)
+    Sigma = (Sigma + Sigma.T) / 2
     Sigma = cp.psd_wrap(Sigma)
 
     # objective function: minimum variance
