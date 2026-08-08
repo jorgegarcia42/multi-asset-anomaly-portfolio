@@ -1,6 +1,6 @@
 # multi-asset anomaly portfolio engine
 a quantitative simulation engine designed to exploit market anomalies across the sp500<br>
-this engine was reengineered to eliminate structural lookahead biases, survivorships biases and execution impossibilities. it features a strick walk forward testing environment
+this engine was reengineered to eliminate structural lookahead biases, survivorships biases and execution impossibilities. it features a strict walk forward testing environment
 
 ## architecture
 * data ingestion: we get the sp500 tickers from the start date, ensuring the engine doesnt see the future
@@ -30,7 +30,7 @@ after reducing the max_weigth to 0.1 and 0.05 and not getting good results, i be
 
 ## covariance stabilizat (Ledoit-Wolf)
 a major challenge in mean-variance optimization is the "curse of dimensionality $N > $T", when optimizing a 500 asset universe in a short time period, the sample covariance matrix becomes noisy
-to solve this, i replaced `.cov()` with **Leodit-Wolf Shrinkage**. this algorithm computes de optimal shrinkage intensity, blending the noisy sample matrix with a structured target matrix. the result is a well-conditioned, positive-definite matrix that stabilizes weight allocation
+to solve this, i replaced `.cov()` with **Ledoit-Wolf Shrinkage**. this algorithm computes the optimal shrinkage intensity, blending the noisy sample matrix with a structured target matrix. the result is a well-conditioned, positive-definite matrix that stabilizes weight allocation
 
 ### performance
 | Strategy Profile | CAGR | Volatility | Sharpe | Max Drawdown |
